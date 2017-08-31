@@ -9,17 +9,14 @@ public enum FitnessMeasure{
 }
 	
 
-
 public class neuralController : MonoBehaviour {
 
 	public static double[] weights;
 
 
 	public int sensorLenght;
-	int raycastLenghtSide = 5;
 	Rigidbody rigidbody;
 
-	//Network test;
 
 	public FitnessMeasure fitnessMeasure;
 
@@ -52,7 +49,6 @@ public class neuralController : MonoBehaviour {
     void Start()
     {
 		int[] parameters = { 3, 5, 2 };
-		//test = new Network (parameters);
 
         Time.timeScale = timeScale;
 
@@ -72,20 +68,6 @@ public class neuralController : MonoBehaviour {
         position = transform.position;
         networks = new Network[population];
 
-
-
-		weights = new double[25];
-		for (int i = 0; i < 25; i++) {
-		
-			weights [i] = Random.Range (-1.0f, 1.0f);
-		}
-
-		Network test = new Network (parameters);
-		Network2 test2 = new Network2 ();
-
-		//Debug.Log (iterative [0] + " " + iterative [1]);
-		//Debug.Log (recurrent [0] + " " + recurrent [1]);
-		//Debug.Log (hardCoded [0] + " hardfjdfighdf " + hardCoded[1]);
 
         for (int i = 0; i < population; i++)
         {
@@ -114,9 +96,10 @@ public class neuralController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Time.timeScale = timeScale;
         
-
+		Time.timeScale = timeScale;
+        
+		//check if the network is moving
 		if(driveTime > 3 && rigidbody.velocity.magnitude<0.005)
         {
 			//Debug.Log ("This one stands still!");
@@ -125,6 +108,8 @@ public class neuralController : MonoBehaviour {
 
 	}
 
+
+	//game over, friend :/
 	void OnCollisionEnter (Collision col)
 	{
 		//Debug.Log ("end!");
@@ -147,10 +132,14 @@ public class neuralController : MonoBehaviour {
 
         //Debug.Log("network " + currentNeuralNetwork + " scored " + points[currentNeuralNetwork]);
 
+
+		//now we reproduce
         if(currentNeuralNetwork == population-1)
         {
         double maxValue = points[0];
         int maxIndex = 0;
+
+		//looking for the two best networks in the generation
 
         for(int i = 1; i < population; i++)
         {
@@ -190,19 +179,24 @@ public class neuralController : MonoBehaviour {
             for(int i = 0; i < population; i++)
             {
                 points[i] = 0;
+				//creating new generation of networks with random combinations of genes from two best parents
                 networks[i] = new Network(father, mother);
             }
 
             generation++;
             Debug.Log("generation " + generation +" is born");
 
+			//because we increment it at the beginning, that's why -1
             currentNeuralNetwork = -1;
         }
 
         currentNeuralNetwork++;
+
+		//position reset is pretty important, don't forget it :*
         position = transform.position;
 	}
 
+	//TODO: sometimes the velocity is not reseted.. for some reason
     void resetCarPosition()
     {
         rigidbody.velocity = Vector3.zero;
