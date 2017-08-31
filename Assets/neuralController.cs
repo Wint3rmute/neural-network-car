@@ -11,9 +11,6 @@ public enum FitnessMeasure{
 
 public class neuralController : MonoBehaviour {
 
-	public static double[] weights;
-
-
 	public int sensorLenght;
 	Rigidbody rigidbody;
 
@@ -27,17 +24,20 @@ public class neuralController : MonoBehaviour {
     public int timeScale;
 
 	public int population;
+	public static int staticPopulation;
 
     public double driveTime = 0;
 	public static double steering;
 	public static double braking;
 	public static double motor;
 
-	public int generation = 0;
+	public static int generation = 0;
 	public double [] points;
 	public double [] results;
 	double [] sensors;
-	int currentNeuralNetwork = 0;
+	public static int currentNeuralNetwork = 0;
+
+	public static float bestDistance = 0;
 
 
 	Network [] networks;
@@ -49,6 +49,7 @@ public class neuralController : MonoBehaviour {
     void Start()
     {
 		int[] parameters = { 3, 5, 2 };
+		staticPopulation = population;
 
         Time.timeScale = timeScale;
 
@@ -151,6 +152,12 @@ public class neuralController : MonoBehaviour {
         }
 
         Debug.Log("first parent is " + maxIndex);
+
+			if (points [maxIndex] > bestDistance) {
+			
+				bestDistance = (float)points [maxIndex];
+			
+			}
 
             points[maxIndex] = -10;
 
